@@ -1,0 +1,45 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# Node modules (if you add any build tools later)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build outputs (if you add a build process)
+dist/
+build/
+*.zip
+
+# Environment files (if you store API keys - DON'T commit these!)
+.env
+.env.local
+secrets.json
+
+# Chrome extension files that shouldn't be committed
+*.pem
+*.crx
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp

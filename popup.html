@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resume Job Matcher</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 450px;
+      min-height: 500px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #333;
+    }
+
+    .container {
+      background: white;
+      min-height: 500px;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 20px;
+      margin-bottom: 5px;
+    }
+
+    .header p {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .content {
+      padding: 20px;
+    }
+
+    .tab-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      color: #6b7280;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: all 0.3s;
+    }
+
+    .tab-btn.active {
+      color: #667eea;
+      border-bottom-color: #667eea;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 6px;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 13px;
+      transition: border 0.3s;
+    }
+
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .file-input-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      border: 2px dashed #d1d5db;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: #f3f4f6;
+      color: #374151;
+      margin-top: 10px;
+    }
+
+    .btn-secondary:hover {
+      background: #e5e7eb;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .spinner {
+      border: 3px solid #f3f4f6;
+      border-top: 3px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 10px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .results {
+      max-height: 350px;
+      overflow-y: auto;
+    }
+
+    .score-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .score-value {
+      font-size: 48px;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+
+    .section {
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 10px;
+      padding-bottom: 5px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    .list-item {
+      padding: 8px 0;
+      font-size: 13px;
+      color: #4b5563;
+      line-height: 1.5;
+    }
+
+    .list-item::before {
+      content: "•";
+      color: #667eea;
+      font-weight: bold;
+      margin-right: 8px;
+    }
+
+    .bullet-optimization {
+      background: #f9fafb;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      border-left: 3px solid #667eea;
+    }
+
+    .bullet-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .bullet-original {
+      color: #6b7280;
+      font-size: 12px;
+      margin-bottom: 8px;
+      text-decoration: line-through;
+    }
+
+    .bullet-optimized {
+      color: #059669;
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .bullet-reason {
+      background: #e0e7ff;
+      padding: 6px;
+      border-radius: 4px;
+      font-size: 11px;
+      color: #4338ca;
+    }
+
+    .alert {
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      margin-bottom: 15px;
+    }
+
+    .alert-info {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .alert-error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .alert-success {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+
+    .status-saved {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .status-not-saved {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .small-text {
+      font-size: 11px;
+      color: #6b7280;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🎯 Resume Job Matcher</h1>
+      <p>AI-powered resume optimization</p>
+    </div>
+
+    <div class="content">
+      <div class="tab-buttons">
+        <button class="tab-btn active" data-tab="analyze">Analyze</button>
+        <button class="tab-btn" data-tab="settings">Settings</button>
+      </div>
+
+      <!-- Analyze Tab -->
+      <div id="analyze-tab" class="tab-content active">
+        <div id="api-warning" class="alert alert-error" style="display: none;">
+          ⚠️ Please set your Anthropic API key in Settings first.
+        </div>
+
+        <div class="input-group">
+          <label>Job Description (PDF)</label>
+          <input type="file" id="jd-file" accept=".pdf">
+          <div class="small-text">Upload the job description as PDF</div>
+        </div>
+
+        <div class="input-group">
+          <label>Resume (PDF)</label>
+          <input type="file" id="resume-file" accept=".pdf">
+          <div class="small-text">Upload your resume as PDF</div>
+        </div>
+
+        <button id="analyze-btn" class="btn btn-primary">Analyze Match</button>
+
+        <div id="loading" class="loading" style="display: none;">
+          <div class="spinner"></div>
+          <p>Analyzing your resume match...</p>
+        </div>
+
+        <div id="results" class="results" style="display: none;"></div>
+      </div>
+
+      <!-- Settings Tab -->
+      <div id="settings-tab" class="tab-content">
+        <div class="alert alert-info">
+          🔑 Your API key is stored locally and never shared. Get your key from 
+          <a href="https://console.anthropic.com/" target="_blank">console.anthropic.com</a>
+        </div>
+
+        <div class="input-group">
+          <label>
+            Anthropic API Key
+            <span id="api-status" class="status-badge status-not-saved">Not Saved</span>
+          </label>
+          <input type="password" id="api-key" placeholder="sk-ant-...">
+        </div>
+
+        <button id="save-key-btn" class="btn btn-primary">Save API Key</button>
+        <button id="clear-key-btn" class="btn btn-secondary">Clear API Key</button>
+
+        <div id="save-status" style="margin-top: 15px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
